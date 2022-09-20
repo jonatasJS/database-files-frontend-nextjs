@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import Link from "next/link";
 import { uniqueId } from "lodash";
@@ -8,30 +9,14 @@ import { motion } from "framer-motion";
 import api from "../services/api";
 
 import { BsArrowDown, BsArrowRight } from "react-icons/bs";
+
 import FileList from "../components/FileList";
 
-import { ArrowDown, Content, Header } from "./styles";
-import { useEffect, useState } from "react";
+import { FilesBackendProps, UploadedFileProps } from "../types";
 
-interface UploadedFileProps {
-  id: string;
-  name: string;
-  readableSize: string;
-  preview: string;
-  uploaded: boolean;
-  error: boolean;
-  url: string;
-  progress: number;
-}
+import { ArrowDown, Content, Header } from "../styles/HomeStyles";
 
-interface FilesBackendProps {
-  _id: string;
-  name: string;
-  size: number;
-  key: string;
-  url: string;
-  createdAt: string;
-}
+import Upload from "../components/Upload";
 
 const Home: NextPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFileProps[]>([]);
@@ -76,12 +61,116 @@ const Home: NextPage = () => {
     }
   }
 
+  async function handleUpload(files: UploadedFileProps[]) {
+    const uploadedFiles = files.map((file) => ({
+      file,
+      id: uniqueId(),
+      name: file.name,
+      readableSize: filesize(file.size),
+      preview: URL.createObjectURL(file),
+      progress: 0,
+      uploaded: false,
+      error: false,
+      url: null,
+    }));
+
+    uploadedFiles.forEach(processUpload);
+  }
+
+  async function updateFile(
+    id: string,
+    data: {
+      progress?: number;
+      uploaded?: boolean;
+      id?: any;
+      url?: any;
+      error?: boolean;
+    }
+  ) {
+    setUploadedFiles(
+      data.map((uploadedFile) => {
+        return id === uploadedFile.id
+          ? { ...uploadedFile, ...data }
+          : uploadedFile;
+      })
+    );
+  }
+
+  async function processUpload(uploadedFile: {
+    file: string | Blob;
+    name: string | undefined;
+    id: string;
+    readableSize: string;
+    preview: string | Blob;
+    progress: number;
+    uploaded: boolean;
+    error: boolean;
+    url: null;
+  }) {
+    const data = new FormData();
+
+    await data.append("file", uploadedFile.file, uploadedFile.name);
+
+    await api
+      .post("posts", data, {
+        onUploadProgress: (e) => {
+          const progress = parseInt(String(Math.round((e.loaded * 100) / e.total)));
+
+          updateFile(uploadedFile.id, {
+            progress,
+          });
+        },
+      })
+      .then(async (response) => {
+        await updateFile(uploadedFile.id, {
+          uploaded: true,
+          id: response.data._id,
+          url: response.data.url,
+        });
+        const { data } = await api.get("posts");
+
+        setUploadedFiles(
+          data.map(({ _id, name, size, url }: {
+            _id: string;
+            name: string;
+            size: number;
+            url: string;
+          }) => ({
+            id: _id,
+            name: name,
+            readableSize: filesize(size),
+            preview: url,
+            uploaded:
+              filesize(size) === uploadedFile.readableSize ? true : false,
+            url: url,
+          }))
+        );
+
+        toast("Upload realizado com sucesso!", {
+          type: "success",
+          autoClose: 3000,
+          theme: "dark",
+        });
+      })
+      .catch((err) => {
+        updateFile(uploadedFile.id, {
+          error: true,
+        });
+        toast(`Erro ao realizar upload!\n\nErro: ${err}`, {
+          type: "error",
+          autoClose: 3000,
+          theme: "dark",
+          pauseOnHover: false,
+        });
+      });
+  }
+
   return (
     <>
       <Header>
         <h1>Guarde seus arquivos na nuvem.</h1>
         <div>
-          <ArrowDown teste={0.3}>
+          <ArrowDown>
             <BsArrowDown
               style={{
                 width: "1rem",
@@ -94,7 +183,7 @@ const Home: NextPage = () => {
               strokeWidth={1.5}
             />
           </ArrowDown>
-          <ArrowDown teste={0}>
+          <ArrowDown>
             <BsArrowDown
               style={{
                 width: "1.5rem",
@@ -107,7 +196,7 @@ const Home: NextPage = () => {
               strokeWidth={1.5}
             />
           </ArrowDown>
-          <ArrowDown teste={0.3}>
+          <ArrowDown>
             <BsArrowDown
               style={{
                 width: "1rem",
@@ -123,7 +212,7 @@ const Home: NextPage = () => {
         </div>
       </Header>
       <Content>
-        {/* <Upload onUpload={this.handleUpload} /> */}
+        <Upload onUpload={handleUpload} />
         {!!uploadedFiles.length && (
           <FileList files={uploadedFiles} onDelete={handleDelete} />
         )}
@@ -148,16 +237,18 @@ const Home: NextPage = () => {
           }}
         >
           <Link title="Listas de arquivos" href="/files">
-            <BsArrowRight
-              style={{
-                width: "1.5rem",
-                height: "1.5rem",
-              }}
-              strokeWidth={1.5}
-              color="#b29bff"
-              width={100}
-              height={100}
-            />
+            <a>
+              <BsArrowRight
+                style={{
+                  width: "1.5rem",
+                  height: "1.5rem",
+                }}
+                strokeWidth={1.5}
+                color="#b29bff"
+                width={100}
+                height={100}
+              />
+            </a>
           </Link>
         </motion.div>
       </Content>
