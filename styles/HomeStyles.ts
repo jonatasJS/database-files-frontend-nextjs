@@ -1,6 +1,7 @@
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
+import { motion } from "framer-motion";
 
-export const Container = styled.div`
+export const Container = styled(motion.div)`
   /* height: 100%; */
   display: flex;
   justify-content: center;
@@ -41,25 +42,10 @@ export const Header = styled.header`
   }
 `;
 
-const arrowDownAnim = keyframes`
-  from {
-    transform: translateY(-5px);
-  }
-
-  to {
-    transform: translateY(5px);
-  }
-`;
-
 export const ArrowDown = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: ${arrowDownAnim} 2s infinite alternate
-    ease-in-out;
-  animation-delay: ${(props: {
-    teste: number;
-  }) => props.teste}s;
 `;
 
 export const Content = styled.div`
