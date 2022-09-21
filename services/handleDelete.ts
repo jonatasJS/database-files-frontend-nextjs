@@ -4,15 +4,21 @@ import { UploadedFileProps } from "../types";
 
 import api from "./api";
 
-async function handleDelete(id: number | string, setUploadedFiles: (value: SetStateAction<UploadedFileProps[]>) => void) {
+async function handleDelete(
+    id: string,
+    setUploadedFiles: (value: SetStateAction<UploadedFileProps[]>) => void,
+    files: Array<UploadedFileProps>
+    ) {
   try {
-    const fileDeleted = await api.get(`posts/${id}`);
+    console.log(id);
+    const { data } = await api.get(`posts/${id}`);
     await api.delete(`posts/${id}`);
+    const dataFiles = files.map((file: UploadedFileProps) => file._id === id ?
+      { ...file, uploaded: false, progress: 0 } :
+      file);
 
-    setUploadedFiles((state) =>
-      state.filter((file) => file.id !== fileDeleted.data.id)
-    );
-    toast(`Arquivo "${fileDeleted.data.name}" deletado com sucesso!`, {
+    setUploadedFiles(dataFiles);
+    toast(`Arquivo "${data.name}" deletado com sucesso!`, {
       type: "success",
       autoClose: 3000,
       theme: "dark",

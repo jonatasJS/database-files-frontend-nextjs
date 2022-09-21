@@ -1,6 +1,7 @@
 export interface UploadedFileProps {
   file?: File | Blob;
   id: string;
+  _id: string;
   name: string;
   readableSize: string;
   size: number;

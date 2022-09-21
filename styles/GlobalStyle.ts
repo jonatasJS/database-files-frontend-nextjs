@@ -18,7 +18,7 @@ export default createGlobalStyle`
     -webkit-font-smoothing: antialiased;
   }
 
-  html, body, #root {
+  html, body, #__next {
     display: flex;
     align-items: center;
     justify-content: center;

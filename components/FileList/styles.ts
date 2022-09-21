@@ -14,6 +14,7 @@ export const Container = styled(motion.ul)`
   border-radius: 10px;
   margin-top: 20px;
   max-height: 300px;
+  width: 100%;
   overflow-x: auto;
   overflow-y: none;
   scroll-behavior: smooth;
