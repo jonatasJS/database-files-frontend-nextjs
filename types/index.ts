@@ -1,4 +1,5 @@
 export interface UploadedFileProps {
+  file?: File | Blob;
   id: string;
   name: string;
   readableSize: string;
@@ -7,7 +8,7 @@ export interface UploadedFileProps {
   uploaded: boolean;
   error: boolean;
   url: string;
-  progress: number;
+  progress: number |string;
 }
 
 export interface FilesBackendProps {
