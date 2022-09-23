@@ -234,6 +234,8 @@ export default function Profile({
                 gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
               }}
             >
+
+              {/* carregar mais usuarios da api quando der scroll */}
               {users.map(({ _id, email, username, createdAt }) => (
                 <div key={_id} style={{
                   display: "flex",

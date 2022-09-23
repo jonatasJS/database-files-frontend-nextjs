@@ -13,14 +13,16 @@ import { GetServerSideProps } from "next";
 // https://codepen.io/nove1398/pen/OJPeYrm
 
 export default function User({
-  userdata: userData,
+  userData,
 }: {
-  userdata: {
+  userData: {
     username: string;
     email: string;
     _id: string;
   };
 }) {
+
+  console.log(userData)
 
   return (
     <div className="bg-light container pl-3 pr-5">
@@ -67,25 +69,6 @@ export default function User({
                   Save
                 </button>
               </form>
-            </div>
-            <div className="text-center">
-              <div
-                className="btn btn-outline-danger"
-                onClick={(e) => {
-                  e.preventDefault();
-                  localStorage.removeItem("token");
-                  localStorage.removeItem("userdata");
-                  toast.success("Logged out successfully", {
-                    theme: "dark",
-                    autoClose: 5000,
-                  });
-                  setTimeout(() => {
-                    window.location.href = "/login";
-                  }, 5100);
-                }}
-              >
-                Sign Out
-              </div>
             </div>
           </div>
           =
@@ -226,8 +209,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const userData = await api.get(`/user/${username}`).then(
     (response) => response.data
   );
-
-  console.log("userData:",userData);
 
   return {
     props: {
