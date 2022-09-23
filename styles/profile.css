@@ -1,22 +1,38 @@
 /**
 * Profile Styles
 */
-#avatar-img{
+div[data-rmiz-modal-overlay="visible"] {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  transition: all 0.5s ease;
+}
+
+button[aria-label="Minimize image"] {
+  border: 0;
+  display: flex;
+  box-shadow: none;
+  align-items: center;
+  justify-content: center;
+}
+
+#avatar-img {
   border: 5px solid #cecece;
   height: 100%;
   width: 100%;
   object-fit: cover;
 }
-#avatar-container{
+
+#avatar-container {
   width: 200px;
   height: 200px;
 }
-#avatar-overlay{
+
+#avatar-overlay {
   position: absolute;
   height: 100%;
-  width:calc(100% - 5px);
-  top:50%;
-  left:50%;
+  width: calc(100% - 5px);
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   display: none;
   cursor: pointer;
@@ -24,7 +40,7 @@
   opacity: 0.7;
 }
 
-#avatar-container:hover > #avatar-overlay{
+#avatar-container:hover>#avatar-overlay {
   display: flex;
   justify-content: center;
   align-items: center;

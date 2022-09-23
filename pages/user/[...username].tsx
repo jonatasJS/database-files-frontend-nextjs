@@ -1,49 +1,30 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { motion } from "framer-motion";
+import { FiLogOut } from "react-icons/fi";
+import { toast } from "react-toastify";
+
+import {} from "../../styles/ProfileStyles";
+import api from "../../services/api";
+import Image from "next/image";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
-import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import moment from "moment";
-import Zoom from "react-medium-image-zoom";
-
-import api from "../../services/api";
 
 // https://codepen.io/nove1398/pen/OJPeYrm
 
-export default function Profile({
-  users,
+export default function User({
+  userdata: userData,
 }: {
-  users: {
+  userdata: {
     username: string;
     email: string;
     _id: string;
-    createdAt: string;
-  }[];
+  };
 }) {
-  const [userData, setUserData] = useState<{
-    username: string;
-    email: string;
-    _id: string;
-  } | null>(null);
-
-  useEffect(() => {
-    const data = localStorage.getItem("userdata");
-    if (data) {
-      console.log(data);
-      return setUserData(JSON.parse(data));
-    }
-
-    setUserData(null);
-  }, []);
 
   return (
-    <div className="bg-light container pl-3 pr-5 pt-3 pb-3">
-      <div
-        className="row"
-        style={{
-          marginRight: "-7rem",
-          marginLeft: "-6rem",
-        }}
-      >
+    <div className="bg-light container pl-3 pr-5">
+      <div className="row ">
         <div className="col-sm-4">
           <div className="">
             <div className="position-relative">
@@ -98,7 +79,9 @@ export default function Profile({
                     theme: "dark",
                     autoClose: 5000,
                   });
-                  window.location.href = "/login";
+                  setTimeout(() => {
+                    window.location.href = "/login";
+                  }, 5100);
                 }}
               >
                 Sign Out
@@ -226,49 +209,6 @@ export default function Profile({
                 Update
               </button>
             </form>
-
-            <h3>Friends</h3>
-            <div className="grid-container">
-              <div
-                className="row"
-                style={{
-                  rowGap: "1em",
-                }}
-              >
-                {users.map(({ _id, email, username, createdAt }) => (
-                  <div key={_id} className="col-12 col-md-4 col-lg-1">
-                    <div className="card">
-                      <Zoom
-                        zoomMargin={100}
-                      >
-                        <img
-                          className="card-img-top"
-                          src={`https://avatars.dicebear.com/api/identicon/${username}.svg`}
-                          alt={username}
-                        />
-                      </Zoom>
-                      <div className="card-body">
-                        <Link href={`/user/${username}`}>
-                          <a
-                            style={{
-                              textDecoration: "none",
-                              color: "black",
-                            }}
-                          >
-                            <h5 className="card-title">{username}</h5>
-                          </a>
-                        </Link>
-                        <p className="card-text">
-                          {moment(createdAt).format("DD/MM/YYYY")}
-                          <br />
-                          <span>{moment(createdAt).format("hh:mm:ss")}</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -276,15 +216,22 @@ export default function Profile({
   );
 }
 
+// pegar dados de um usiario
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { username }: {
+    username: string[];
+  } = context.query;
+  
   // pegar dados do usuario
-  const users = await api.get(`/users`).then((response) => response.data);
+  const userData = await api.get(`/user/${username}`).then(
+    (response) => response.data
+  );
 
-  console.log(users);
+  console.log("userData:",userData);
 
   return {
     props: {
-      users,
+      userData
     },
   };
-};
+}

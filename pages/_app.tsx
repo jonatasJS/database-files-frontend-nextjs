@@ -54,12 +54,16 @@ function MyApp({ Component, pageProps }: AppProps) {
     <Head>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" />
     </Head>
-      {router.pathname !== "/profile" && (
-        <Layout>
+      {
+        (router.pathname !== "/profile" &&
+        !router.pathname.includes("/user/")) ? (
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        ) : (
           <Component {...pageProps} />
-        </Layout>
-      )}
-      {router.pathname === "/profile" && <Component {...pageProps} />}
+        )
+      }
     </>
   );
 }

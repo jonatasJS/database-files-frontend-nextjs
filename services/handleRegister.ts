@@ -48,13 +48,13 @@ export default async function handleRegister({
         );
         toast.success("Conta criada com sucesso!", {
           theme: "dark",
-          autoClose: 5000,
+          autoClose: 2000,
         });
         await localStorage.setItem("token", response.data.token);
         await new Audio("/notification-sound.mp3").play().then(() => {
           setTimeout(() => {
             window.location.href = "/";
-          }, 5100);
+          }, 2100);
         });
       }
     })
