@@ -228,46 +228,52 @@ export default function Profile({
             </form>
 
             <h3>Friends</h3>
-            <div className="grid-container">
-              <div
-                className="row"
-                style={{
-                  rowGap: "1em",
-                }}
-              >
-                {users.map(({ _id, email, username, createdAt }) => (
-                  <div key={_id} className="col-12 col-md-4 col-lg-1">
-                    <div className="card">
-                      <Zoom
-                        zoomMargin={100}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+              }}
+            >
+              {users.map(({ _id, email, username, createdAt }) => (
+                <div key={_id} style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "1em",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  margin: "1em",
+                  textAlign: "center"
+                }}>
+                  <Zoom zoomMargin={100}>
+                    <img
+                      className="group list-group-image"
+                      height={100}
+                      width={100}
+                      src={`https://avatars.dicebear.com/api/identicon/${username}.svg`}
+                      alt={username}
+                    />
+                  </Zoom>
+                  <div className="card-body">
+                    <Link href={`/user/${username}`}>
+                      <a
+                        style={{
+                          textDecoration: "none",
+                          color: "black",
+                        }}
                       >
-                        <img
-                          className="card-img-top"
-                          src={`https://avatars.dicebear.com/api/identicon/${username}.svg`}
-                          alt={username}
-                        />
-                      </Zoom>
-                      <div className="card-body">
-                        <Link href={`/user/${username}`}>
-                          <a
-                            style={{
-                              textDecoration: "none",
-                              color: "black",
-                            }}
-                          >
-                            <h5 className="card-title">{username}</h5>
-                          </a>
-                        </Link>
-                        <p className="card-text">
-                          {moment(createdAt).format("DD/MM/YYYY")}
-                          <br />
-                          <span>{moment(createdAt).format("hh:mm:ss")}</span>
-                        </p>
-                      </div>
-                    </div>
+                        <h5 className="card-title">{username}</h5>
+                      </a>
+                    </Link>
+                    <p className="card-text">
+                      {moment(createdAt).format("DD/MM/YYYY")}
+                      <br />
+                      <span>{moment(createdAt).format("hh:mm:ss")}</span>
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
